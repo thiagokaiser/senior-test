@@ -91,7 +91,7 @@ public class ItemResource {
 			@RequestParam(value="linesPerPage", defaultValue = "24") Integer linesPerPage, 
 			@RequestParam(value="orderBy", defaultValue = "descricao") String orderBy, 
 			@RequestParam(value="direction", defaultValue = "DESC") String direction,
-			@RequestParam(value="search") String search) {
+			@RequestParam(value="search", defaultValue = "") String search) {
 		
 		Page<Item> list = service.findPage(page, linesPerPage, orderBy, direction, search);
 		Page<ItemDTO> listDto = list.map(obj -> new ItemDTO(obj));
