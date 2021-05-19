@@ -16,10 +16,10 @@ public class ItemDTO implements Serializable{
 	@NotEmpty(message = "Campo Obrigatário")	
 	@Size(min=3, max=80, message = "Campo deve estar entre 3 e 80 caracteres")
 	private String descricao;
-
-	private Double preco;
 	
+	private Double preco;	
 	private Integer tipo;
+	private Boolean ativo;
 
 	public ItemDTO() {		
 	}
@@ -29,6 +29,7 @@ public class ItemDTO implements Serializable{
 		this.descricao = obj.getDescricao();
 		this.preco = obj.getPreco();
 		this.tipo = obj.getTipo().getCod();
+		this.ativo = obj.getAtivo();
 	}
 
 	public UUID getId() {
@@ -62,6 +63,12 @@ public class ItemDTO implements Serializable{
 	public void setTipo(Integer tipo) {
 		this.tipo = tipo;
 	}
-	
-	
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}	
 }

@@ -29,9 +29,9 @@ public class DBService {
 	
 	public void instantiateTestDatabase() throws ParseException {
 		
-		Item item1 = new Item(null,"Item 1", 10.0, TipoItem.PRODUTO);
-		Item item2 = new Item(null,"Item 2", 20.0, TipoItem.SERVICO);
-		Item item3 = new Item(null,"Item 3", 30.0, TipoItem.PRODUTO);		
+		Item item1 = new Item(null,"Item 1", 10.0, TipoItem.PRODUTO, true);
+		Item item2 = new Item(null,"Item 2", 20.0, TipoItem.SERVICO, true);
+		Item item3 = new Item(null,"Item 3", 30.0, TipoItem.PRODUTO, false);		
 		itemRepo.saveAll(Arrays.asList(item1, item2, item3));		
 		
 		Pedido pedido1 = new Pedido(null, new Date());		

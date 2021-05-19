@@ -19,16 +19,18 @@ public class Item implements Serializable{
 	private String descricao;
 	private Double preco;
 	private Integer tipo;
+	private Boolean ativo;
 		
 	public Item() {		
 	}
 
-	public Item(UUID id, String descricao, Double preco, TipoItem tipo) {
+	public Item(UUID id, String descricao, Double preco, TipoItem tipo, Boolean ativo) {
 		super();
 		this.id = id;
 		this.descricao = descricao;
 		this.preco = preco;
 		this.tipo = tipo.getCod();
+		this.ativo = ativo;
 	}
 
 	public UUID getId() {
@@ -61,6 +63,14 @@ public class Item implements Serializable{
 
 	public void setTipo(TipoItem tipo) {
 		this.tipo = tipo.getCod();
+	}	
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
 	}
 
 	@Override

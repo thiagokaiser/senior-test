@@ -11,32 +11,31 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-import com.senior.test.domain.Item;
-import com.senior.test.domain.enums.TipoItem;
-import com.senior.test.dto.ItemDTO;
-import com.senior.test.repositories.ItemRepository;
+import com.senior.test.domain.Pedido;
+import com.senior.test.dto.PedidoDTO;
+import com.senior.test.repositories.PedidoRepository;
 import com.senior.test.services.exceptions.DataIntegrityException;
 import com.senior.test.services.exceptions.ObjectNotFoundException;
 
 @Service
-public class ItemService {
+public class PedidoService {
 
 	@Autowired
-	private ItemRepository repo;		
+	private PedidoRepository repo;		
 	
-	public Item find(UUID id) {		
-		Optional<Item> obj = repo.findById(id);
+	public Pedido find(UUID id) {		
+		Optional<Pedido> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
-		"Objeto não encontrado! Id: " + id + ", Tipo: " + Item.class.getName()));
+		"Objeto não encontrado! Id: " + id + ", Tipo: " + Pedido.class.getName()));
 	}
 
-	public Item insert(Item obj) {
+	public Pedido insert(Pedido obj) {
 		obj.setId(null);
 		return repo.save(obj);		
 	}
 	
-	public Item update(Item obj) {
-		Item newObj = find(obj.getId());
+	public Pedido update(Pedido obj) {
+		Pedido newObj = find(obj.getId());
 		updateData(newObj, obj);		
 		return repo.save(newObj);
 	}
@@ -46,25 +45,25 @@ public class ItemService {
 		try {
 			repo.deleteById(id);			
 		} catch (DataIntegrityViolationException e) {
-			throw new DataIntegrityException("Não é possivel excluir um Item que possui Pedidos.");			
+			throw new DataIntegrityException("Não é possivel excluir o Pedido.");			
 		}		
 	}
 	
-	public List<Item> findAll(){		
+	public List<Pedido> findAll(){		
 		return repo.findAll();
 	}
 	
-	public Page<Item> findPage(Integer page, Integer linesPerPage, String orderBy, String direction, String search){		
+	public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction, String search){		
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);		
-		return repo.findByDescricaoContaining(search, pageRequest);		
-	}	
-	
-	public Item fromDTO(ItemDTO objDto) {		
-		return new Item(objDto.getId(), objDto.getDescricao(), objDto.getPreco(), TipoItem.toEnum(objDto.getTipo()), objDto.getAtivo());
+		return repo.findAll(pageRequest);		
 	}
 	
-	private void updateData(Item newObj, Item obj) {
-		newObj.setDescricao(obj.getDescricao());
+	public Pedido fromDTO(PedidoDTO objDto) {		
+		return new Pedido(objDto.getId(), objDto.getInstante());
+	}
+	
+	private void updateData(Pedido newObj, Pedido obj) {
+		newObj.setInstante(obj.getInstante());
 	}
 	
 	
