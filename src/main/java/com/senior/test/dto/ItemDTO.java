@@ -18,6 +18,8 @@ public class ItemDTO implements Serializable{
 	private String descricao;
 
 	private Double preco;
+	
+	private Integer tipo;
 
 	public ItemDTO() {		
 	}
@@ -26,6 +28,7 @@ public class ItemDTO implements Serializable{
 		this.id = obj.getId();
 		this.descricao = obj.getDescricao();
 		this.preco = obj.getPreco();
+		this.tipo = obj.getTipo().getCod();
 	}
 
 	public UUID getId() {
@@ -50,5 +53,15 @@ public class ItemDTO implements Serializable{
 
 	public void setPreco(Double preco) {
 		this.preco = preco;
-	}	
+	}
+
+	public Integer getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(Integer tipo) {
+		this.tipo = tipo;
+	}
+	
+	
 }

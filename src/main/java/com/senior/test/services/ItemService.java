@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.senior.test.domain.Item;
+import com.senior.test.domain.enums.TipoItem;
 import com.senior.test.dto.ItemDTO;
 import com.senior.test.repositories.ItemRepository;
 import com.senior.test.services.exceptions.DataIntegrityException;
@@ -59,7 +60,7 @@ public class ItemService {
 	}	
 	
 	public Item fromDTO(ItemDTO objDto) {		
-		return new Item(objDto.getId(), objDto.getDescricao(), objDto.getPreco());
+		return new Item(objDto.getId(), objDto.getDescricao(), objDto.getPreco(), TipoItem.toEnum(objDto.getTipo()));
 	}
 	
 	private void updateData(Item newObj, Item obj) {

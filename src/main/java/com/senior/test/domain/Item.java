@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import com.senior.test.domain.enums.TipoItem;
+
 @Entity
 public class Item implements Serializable{	
 	private static final long serialVersionUID = 1L;
@@ -15,16 +17,18 @@ public class Item implements Serializable{
 	@GeneratedValue
 	private UUID id;	
 	private String descricao;
-	private Double preco;	
+	private Double preco;
+	private Integer tipo;
 		
 	public Item() {		
 	}
 
-	public Item(UUID id, String descricao, Double preco) {
+	public Item(UUID id, String descricao, Double preco, TipoItem tipo) {
 		super();
 		this.id = id;
 		this.descricao = descricao;
 		this.preco = preco;
+		this.tipo = tipo.getCod();
 	}
 
 	public UUID getId() {
@@ -49,6 +53,14 @@ public class Item implements Serializable{
 
 	public void setPreco(Double preco) {
 		this.preco = preco;
+	}	
+
+	public TipoItem getTipo() {
+		return TipoItem.toEnum(tipo);
+	}
+
+	public void setTipo(TipoItem tipo) {
+		this.tipo = tipo.getCod();
 	}
 
 	@Override
