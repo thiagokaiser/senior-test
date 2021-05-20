@@ -1,19 +1,19 @@
 package com.senior.test.repositories;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.senior.test.domain.Item;
 import com.senior.test.domain.ItemPedido;
+import com.senior.test.domain.ItemPedidoPK;
 
 @Repository
-public interface ItemPedidoRepository extends JpaRepository<ItemPedido, Integer> {
+public interface ItemPedidoRepository extends JpaRepository<ItemPedido, ItemPedidoPK> {
 
-	Optional<Item> findById(UUID id);
-
-	void deleteById(UUID id);	
+	@Transactional(readOnly = true)	
+	List<ItemPedido> findById_Pedido_Id(UUID idPedido);		
 
 }

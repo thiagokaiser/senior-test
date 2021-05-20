@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.senior.test.domain.Pedido;
 import com.senior.test.dto.PedidoDTO;
+import com.senior.test.dto.PedidoUpdateDTO;
 import com.senior.test.repositories.PedidoRepository;
 import com.senior.test.services.exceptions.DataIntegrityException;
 import com.senior.test.services.exceptions.ObjectNotFoundException;
@@ -59,12 +60,15 @@ public class PedidoService {
 	}
 	
 	public Pedido fromDTO(PedidoDTO objDto) {		
-		return new Pedido(objDto.getId(), objDto.getInstante());
+		return new Pedido(objDto.getId(), objDto.getInstante(), objDto.getSituacao(), objDto.getDesconto(), objDto.getTotal());
+	}
+	
+	public Pedido fromDTO(PedidoUpdateDTO objDto) {		
+		return new Pedido(objDto.getId(), objDto.getInstante(), objDto.getSituacao(), objDto.getDesconto(), objDto.getTotal());
 	}
 	
 	private void updateData(Pedido newObj, Pedido obj) {
-		newObj.setInstante(obj.getInstante());
-	}
-	
-	
+		newObj.setSituacao(obj.getSituacao());
+		newObj.setDesconto(obj.getDesconto());
+	}	
 }

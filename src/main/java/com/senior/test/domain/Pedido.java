@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.senior.test.domain.enums.SituacaoPedido;
 
 @Entity
 public class Pedido implements Serializable{	
@@ -25,7 +24,9 @@ public class Pedido implements Serializable{
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm")
 	private Date instante;
 	
-	private Integer situacao;
+	private Integer situacao;	
+	private Double desconto;	
+	private Double total;
 	
 	@OneToMany(mappedBy = "id.pedido")
 	private Set<ItemPedido> itens = new HashSet<>();
@@ -33,10 +34,12 @@ public class Pedido implements Serializable{
 	public Pedido() {
 	}		
 	
-	public Pedido(UUID id, Date instante) {		
+	public Pedido(UUID id, Date instante, Integer situacao, Double desconto, Double total) {		
 		this.id = id;
 		this.instante = instante;
-		this.situacao = SituacaoPedido.ABERTO.getCod();		
+		this.situacao = situacao;
+		this.desconto = desconto;
+		this.total = total;
 	}
 
 	public UUID getId() {
@@ -61,6 +64,22 @@ public class Pedido implements Serializable{
 
 	public void setSituacao(Integer situacao) {
 		this.situacao = situacao;
+	}	
+
+	public Double getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(Double desconto) {
+		this.desconto = desconto;
+	}
+
+	public Double getTotal() {
+		return total;
+	}
+
+	public void setTotal(Double total) {
+		this.total = total;
 	}
 
 	public Set<ItemPedido> getItens() {

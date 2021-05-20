@@ -2,14 +2,12 @@ package com.senior.test.dto;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
-import com.senior.test.domain.ItemPedido;
-import com.senior.test.domain.Pedido;
+import com.senior.test.services.validation.PedidoUpdate;
 
-public class PedidoDTO implements Serializable{	
+@PedidoUpdate
+public class PedidoUpdateDTO implements Serializable{	
 	private static final long serialVersionUID = 1L;
 
 	private UUID id;	
@@ -17,19 +15,14 @@ public class PedidoDTO implements Serializable{
 	private Integer situacao;
 	private Double desconto;
 	private Double total;
-	private Set<ItemPedido> itens = new HashSet<>();
 	
-	public PedidoDTO() {		
-	}
-	
-	public PedidoDTO(Pedido obj) {
+	public PedidoUpdateDTO(UUID id, Date instante, Integer situacao, Double desconto, Double total) {
 		super();
-		this.id = obj.getId();
-		this.instante = obj.getInstante();
-		this.situacao = obj.getSituacao();
-		this.desconto = obj.getDesconto();
-		this.total = obj.getTotal();
-		this.itens = obj.getItens();
+		this.id = id;
+		this.instante = instante;
+		this.situacao = situacao;
+		this.desconto = desconto;
+		this.total = total;
 	}
 
 	public UUID getId() {
@@ -54,7 +47,7 @@ public class PedidoDTO implements Serializable{
 
 	public void setSituacao(Integer situacao) {
 		this.situacao = situacao;
-	}	
+	}
 
 	public Double getDesconto() {
 		return desconto;
@@ -70,13 +63,5 @@ public class PedidoDTO implements Serializable{
 
 	public void setTotal(Double total) {
 		this.total = total;
-	}
-
-	public Set<ItemPedido> getItens() {
-		return itens;
-	}
-
-	public void setItens(Set<ItemPedido> itens) {
-		this.itens = itens;
-	}
+	}	
 }

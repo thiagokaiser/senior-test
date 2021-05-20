@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.senior.test.domain.Item;
 import com.senior.test.domain.ItemPedido;
 import com.senior.test.domain.Pedido;
+import com.senior.test.domain.enums.SituacaoPedido;
 import com.senior.test.domain.enums.TipoItem;
 import com.senior.test.repositories.ItemPedidoRepository;
 import com.senior.test.repositories.ItemRepository;
@@ -34,15 +35,15 @@ public class DBService {
 		Item item3 = new Item(null,"Item 3", 30.0, TipoItem.PRODUTO, false);		
 		itemRepo.saveAll(Arrays.asList(item1, item2, item3));		
 		
-		Pedido pedido1 = new Pedido(null, new Date());		
-		pedidoRepo.save(pedido1);
+		Pedido pedido1 = new Pedido(null, new Date(), SituacaoPedido.ABERTO.getCod(), 0.0, 0.0); 		
+		Pedido pedido2 = new Pedido(null, new Date(), SituacaoPedido.ABERTO.getCod(), 0.0, 0.0);		
+		pedidoRepo.saveAll(Arrays.asList(pedido1, pedido2));
 		
 		ItemPedido itemPedido1 = new ItemPedido(pedido1, item1, 2);
 		ItemPedido itemPedido2 = new ItemPedido(pedido1, item2, 2);
-		itemPedidoRepo.saveAll(Arrays.asList(itemPedido1, itemPedido2));
-		
-		
-		
+		ItemPedido itemPedido3 = new ItemPedido(pedido2, item1, 3);
+		ItemPedido itemPedido4 = new ItemPedido(pedido2, item2, 6);
+		itemPedidoRepo.saveAll(Arrays.asList(itemPedido1, itemPedido2, itemPedido3, itemPedido4));		
 		
 	}	
 }
