@@ -3,6 +3,7 @@ package com.senior.test.services;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +26,7 @@ import com.senior.test.services.exceptions.ObjectNotFoundException;
 public class PedidoService {
 
 	@Autowired
-	private PedidoRepository repo;
-	
-	@Autowired 
-	private ItemPedidoService itemPedidoService;
+	private PedidoRepository repo;	
 	
 	public Pedido find(UUID id) {		
 		Optional<Pedido> obj = repo.findById(id);
@@ -50,10 +48,15 @@ public class PedidoService {
 	public Pedido update(Pedido obj) {		
 		Pedido newObj = find(obj.getId());
 		updateData(newObj, obj);
-		newObj = repo.save(newObj);
 		updateTotais(newObj);
-		return newObj;
-	}	
+		return repo.save(newObj);
+	}
+	
+	public Pedido updateOnlyTotais(Pedido obj) {
+		Pedido newObj = find(obj.getId());
+		updateTotais(newObj);
+		return repo.save(newObj);
+	}
 	
 	public void delete(UUID id) {
 		find(id);
@@ -83,11 +86,11 @@ public class PedidoService {
 		newObj.setObservacao(obj.getObservacao());		
 	}	
 	
-	public void updateTotais(Pedido obj) {
+	private void updateTotais(Pedido obj) {
 		Double totalProduto = 0.0;
 		Double totalServico = 0.0;		
 		
-		List<ItemPedido> itens = itemPedidoService.findByPedido(obj.getId());
+		Set<ItemPedido> itens = obj.getItens();
 		
 		for (ItemPedido itemPedido : itens) {
 			Double totalItem = itemPedido.getPreco() * itemPedido.getQuantidade();			
@@ -105,6 +108,6 @@ public class PedidoService {
 		obj.setTotal(totalProduto + totalServico);
 		obj.setTotalProduto(totalProduto);
 		obj.setTotalServico(totalServico);		
-		repo.save(obj);
-	}
+	}	
+	 
 }

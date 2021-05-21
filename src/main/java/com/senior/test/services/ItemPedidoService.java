@@ -108,8 +108,7 @@ public class ItemPedidoService {
 	}
 	
 	private void updateTotaisPedido(ItemPedido obj) {
-		Pedido pedido = pedidoService.find(obj.getPedido().getId());		
-		pedidoService.updateTotais(pedido);
+		pedidoService.updateOnlyTotais(obj.getPedido());
 	}
 	
 	private void updateTotaisItem(ItemPedido obj) {
