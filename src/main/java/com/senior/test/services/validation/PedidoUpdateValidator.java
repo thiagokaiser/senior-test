@@ -37,12 +37,15 @@ public class PedidoUpdateValidator implements ConstraintValidator<PedidoUpdate, 
 		@SuppressWarnings("unchecked")
 		Map<String, String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 		String uriId = map.get("id");
+		if(uriId == null) {
+			return true;
+		}
 		
 		List<FieldMessage> list = new ArrayList<>();
 				
 		Pedido pedido = pedidoService.find(UUID.fromString(uriId));
 		
-		if (!pedido.getSituacao().equals(SituacaoPedido.ABERTO.getCod())) {
+		if (!pedido.getSituacao().equals(SituacaoPedido.ABERTO)) {
 			list.add(new FieldMessage("situacao", "Pedido não está ABERTO"));			
 		}
 

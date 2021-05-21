@@ -74,14 +74,18 @@ public class ItemPedidoService {
 		return itemPedidoRepo.findAll(pageRequest);		
 	}
 	
-	public ItemPedido fromDTO(ItemPedidoDTO objDto) {		
-		return new ItemPedido(objDto.getPedido(), objDto.getItem(), objDto.getQuantidade());
+	public ItemPedido fromDTO(ItemPedidoDTO objDto) {
+		return new ItemPedido(objDto);
 	}	
 	
-	public ItemPedido fromDTO(ItemPedidoUpdateDTO objDto) {
+	public ItemPedido fromDTO(ItemPedidoUpdateDTO objDto) {		
 		Pedido pedido = pedidoService.find(objDto.getIdPedido());		
-		Item item = itemService.find(objDto.getIdItem());		
-		return new ItemPedido(pedido, item, objDto.getQuantidade());
+		Item item = itemService.find(objDto.getIdItem());
+		ItemPedido itemPedido = new ItemPedido();
+		itemPedido.setPedido(pedido);
+		itemPedido.setItem(item);
+		itemPedido.setQuantidade(objDto.getQuantidade());		
+		return itemPedido;
 	}
 	
 	public ItemPedidoPK setItemPedidoPK(UUID idPedido, UUID idItem) {

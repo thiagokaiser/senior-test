@@ -35,14 +35,15 @@ public class DBService {
 		Item item3 = new Item(null,"Item 3", 30.0, TipoItem.PRODUTO, false);		
 		itemRepo.saveAll(Arrays.asList(item1, item2, item3));		
 		
-		Pedido pedido1 = new Pedido(null, new Date(), SituacaoPedido.ABERTO.getCod(), 0.0, 0.0); 		
-		Pedido pedido2 = new Pedido(null, new Date(), SituacaoPedido.ABERTO.getCod(), 0.0, 0.0);		
+		
+		Pedido pedido1 = new Pedido(null, new Date(), SituacaoPedido.ABERTO.getCod(), 0.0, 0.0, 0.0, 0.0, ""); 		
+		Pedido pedido2 = new Pedido(null, new Date(), SituacaoPedido.ABERTO.getCod(), 0.0, 0.0, 0.0, 0.0, "");		
 		pedidoRepo.saveAll(Arrays.asList(pedido1, pedido2));
 		
-		ItemPedido itemPedido1 = new ItemPedido(pedido1, item1, 2);
-		ItemPedido itemPedido2 = new ItemPedido(pedido1, item2, 2);
-		ItemPedido itemPedido3 = new ItemPedido(pedido2, item1, 3);
-		ItemPedido itemPedido4 = new ItemPedido(pedido2, item2, 6);
+		ItemPedido itemPedido1 = new ItemPedido(pedido1, item1, 2, 0.0, 0.0);
+		ItemPedido itemPedido2 = new ItemPedido(pedido1, item2, 2, 0.0, 0.0);
+		ItemPedido itemPedido3 = new ItemPedido(pedido2, item1, 3, 0.0, 0.0);
+		ItemPedido itemPedido4 = new ItemPedido(pedido2, item2, 6, 0.0, 0.0);
 		itemPedidoRepo.saveAll(Arrays.asList(itemPedido1, itemPedido2, itemPedido3, itemPedido4));		
 		
 	}	

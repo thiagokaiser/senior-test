@@ -16,7 +16,10 @@ public class PedidoDTO implements Serializable{
 	private Date instante;	
 	private Integer situacao;
 	private Double desconto;
+	private Double totalServico;
+	private Double totalProduto;
 	private Double total;
+	private String observacao;
 	private Set<ItemPedido> itens = new HashSet<>();
 	
 	public PedidoDTO() {		
@@ -26,9 +29,12 @@ public class PedidoDTO implements Serializable{
 		super();
 		this.id = obj.getId();
 		this.instante = obj.getInstante();
-		this.situacao = obj.getSituacao();
+		this.situacao = obj.getSituacao().getCod();
 		this.desconto = obj.getDesconto();
+		this.totalServico = obj.getTotalServico();
+		this.totalProduto = obj.getTotalProduto();
 		this.total = obj.getTotal();
+		this.observacao = obj.getObservacao();
 		this.itens = obj.getItens();
 	}
 
@@ -62,8 +68,24 @@ public class PedidoDTO implements Serializable{
 
 	public void setDesconto(Double desconto) {
 		this.desconto = desconto;
+	}	
+
+	public Double getTotalServico() {
+		return totalServico;
 	}
 
+	public void setTotalServico(Double totalServico) {
+		this.totalServico = totalServico;
+	}
+
+	public Double getTotalProduto() {
+		return totalProduto;
+	}
+
+	public void setTotalProduto(Double totalProduto) {
+		this.totalProduto = totalProduto;
+	}
+	
 	public Double getTotal() {
 		return total;
 	}
@@ -71,6 +93,15 @@ public class PedidoDTO implements Serializable{
 	public void setTotal(Double total) {
 		this.total = total;
 	}
+	
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+
 
 	public Set<ItemPedido> getItens() {
 		return itens;

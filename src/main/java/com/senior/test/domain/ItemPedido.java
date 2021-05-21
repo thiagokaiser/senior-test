@@ -6,6 +6,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.senior.test.dto.ItemPedidoDTO;
 
 @Entity
 public class ItemPedido implements Serializable{
@@ -16,16 +17,28 @@ public class ItemPedido implements Serializable{
 	private ItemPedidoPK id = new ItemPedidoPK();
 
 	private Integer quantidade;	
+	private Double preco;
+	private Double total;
 
 	public ItemPedido() {
 	}
 	
-	public ItemPedido(Pedido pedido, Item item, Integer quantidade) {
+	public ItemPedido(Pedido pedido, Item item, Integer quantidade, Double preco, Double total) {
 		super();
 		id.setPedido(pedido);
 		id.setItem(item);
-		this.quantidade = quantidade;		
-	}	
+		this.quantidade = quantidade;
+		this.preco = preco;
+		this.total = total;
+	}
+	
+	public ItemPedido(ItemPedidoDTO obj) {
+		id.setPedido(obj.getPedido());
+		id.setItem(obj.getItem());
+		this.quantidade = obj.getQuantidade();
+		this.preco = obj.getPreco();
+		this.total = obj.getTotal();
+	}
 	
 	@JsonIgnore
 	public Pedido getPedido() {
@@ -58,6 +71,22 @@ public class ItemPedido implements Serializable{
 
 	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
+	}	
+
+	public Double getPreco() {
+		return preco;
+	}
+
+	public void setPreco(Double preco) {
+		this.preco = preco;
+	}	
+
+	public Double getTotal() {
+		return total;
+	}
+
+	public void setTotal(Double total) {
+		this.total = total;
 	}
 
 	@Override

@@ -7,13 +7,18 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.senior.test.domain.enums.SituacaoPedido;
+import com.senior.test.domain.listeners.PedidoListener;
+import com.senior.test.dto.PedidoUpdateDTO;
 
 @Entity
+@EntityListeners(PedidoListener.class)
 public class Pedido implements Serializable{	
 	private static final long serialVersionUID = 1L;
 	
@@ -25,8 +30,11 @@ public class Pedido implements Serializable{
 	private Date instante;
 	
 	private Integer situacao;	
-	private Double desconto;	
+	private Double desconto;
+	private Double totalServico;
+	private Double totalProduto;
 	private Double total;
+	private String observacao;
 	
 	@OneToMany(mappedBy = "id.pedido")
 	private Set<ItemPedido> itens = new HashSet<>();
@@ -34,12 +42,21 @@ public class Pedido implements Serializable{
 	public Pedido() {
 	}		
 	
-	public Pedido(UUID id, Date instante, Integer situacao, Double desconto, Double total) {		
+	public Pedido(UUID id, Date instante, Integer situacao, Double desconto, Double totalServico, Double totalProduto, Double total, String observacao) {		
 		this.id = id;
 		this.instante = instante;
 		this.situacao = situacao;
 		this.desconto = desconto;
+		this.totalServico = totalServico;		
+		this.totalProduto = totalProduto;
 		this.total = total;
+		this.observacao = observacao;
+	}
+	
+	public Pedido(PedidoUpdateDTO obj) {
+		this.situacao = obj.getSituacao();
+		this.desconto = obj.getDesconto();
+		this.observacao = obj.getObservacao();
 	}
 
 	public UUID getId() {
@@ -58,12 +75,12 @@ public class Pedido implements Serializable{
 		this.instante = instante;
 	}
 
-	public Integer getSituacao() {
-		return situacao;
+	public SituacaoPedido getSituacao() {
+		return SituacaoPedido.toEnum(situacao);
 	}
 
-	public void setSituacao(Integer situacao) {
-		this.situacao = situacao;
+	public void setSituacao(SituacaoPedido situacao) {
+		this.situacao = situacao.getCod();
 	}	
 
 	public Double getDesconto() {
@@ -72,14 +89,38 @@ public class Pedido implements Serializable{
 
 	public void setDesconto(Double desconto) {
 		this.desconto = desconto;
+	}	
+
+	public Double getTotalServico() {
+		return totalServico;
 	}
 
+	public void setTotalServico(Double totalServico) {
+		this.totalServico = totalServico;
+	}
+
+	public Double getTotalProduto() {
+		return totalProduto;
+	}
+
+	public void setTotalProduto(Double totalProduto) {
+		this.totalProduto = totalProduto;
+	}
+	
 	public Double getTotal() {
 		return total;
 	}
 
 	public void setTotal(Double total) {
 		this.total = total;
+	}
+	
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
 	}
 
 	public Set<ItemPedido> getItens() {

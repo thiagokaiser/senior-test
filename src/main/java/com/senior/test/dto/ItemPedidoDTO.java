@@ -12,22 +12,28 @@ public class ItemPedidoDTO implements Serializable{
 	private static final long serialVersionUID = 1L;	
 	
 	private ItemPedidoPK id = new ItemPedidoPK();
-
-	private Integer quantidade;	
+	private Integer quantidade;
+	private Double preco;
+	private Double total;
+	
 
 	public ItemPedidoDTO() {
 	}
 	
-	public ItemPedidoDTO(Pedido pedido, Item item, Integer quantidade) {
+	public ItemPedidoDTO(Pedido pedido, Item item, Integer quantidade, Double preco, Double total) {
 		super();
 		id.setPedido(pedido);
 		id.setItem(item);
-		this.quantidade = quantidade;		
+		this.quantidade = quantidade;
+		this.preco = preco;
+		this.total = total;
 	}	
 	
 	public ItemPedidoDTO(ItemPedido obj) {
 		this.id = obj.getId();
-		this.quantidade = obj.getQuantidade();		
+		this.quantidade = obj.getQuantidade();
+		this.preco = obj.getPreco();
+		this.total = obj.getTotal();
 	}
 	
 	@JsonIgnore
@@ -62,5 +68,22 @@ public class ItemPedidoDTO implements Serializable{
 
 	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
-	}		
+	}
+
+	public Double getPreco() {
+		return preco;
+	}
+
+	public void setPreco(Double preco) {
+		this.preco = preco;
+	}
+
+	public Double getTotal() {
+		return total;
+	}
+
+	public void setTotal(Double total) {
+		this.total = total;
+	}	
+	
 }

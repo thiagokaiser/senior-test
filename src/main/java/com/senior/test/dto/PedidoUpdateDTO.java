@@ -1,45 +1,27 @@
 package com.senior.test.dto;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.UUID;
+
+import javax.validation.constraints.Size;
 
 import com.senior.test.services.validation.PedidoUpdate;
 
 @PedidoUpdate
 public class PedidoUpdateDTO implements Serializable{	
-	private static final long serialVersionUID = 1L;
-
-	private UUID id;	
-	private Date instante;	
-	private Integer situacao;
-	private Double desconto;
-	private Double total;
+	private static final long serialVersionUID = 1L;			
 	
-	public PedidoUpdateDTO(UUID id, Date instante, Integer situacao, Double desconto, Double total) {
-		super();
-		this.id = id;
-		this.instante = instante;
+	private Integer situacao;
+	private Double desconto;	
+	
+	@Size(min = 0, max = 60, message = "Observação deve ter no maximo 60 caracteres")
+	private String observacao;
+	
+	public PedidoUpdateDTO(Integer situacao, Double desconto, String observacao) {
+		super();		
 		this.situacao = situacao;
 		this.desconto = desconto;
-		this.total = total;
-	}
-
-	public UUID getId() {
-		return id;
-	}
-
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
-	public Date getInstante() {
-		return instante;
-	}
-
-	public void setInstante(Date instante) {
-		this.instante = instante;
-	}
+		this.observacao = observacao;
+	}		
 
 	public Integer getSituacao() {
 		return situacao;
@@ -57,11 +39,11 @@ public class PedidoUpdateDTO implements Serializable{
 		this.desconto = desconto;
 	}
 
-	public Double getTotal() {
-		return total;
+	public String getObservacao() {
+		return observacao;
 	}
 
-	public void setTotal(Double total) {
-		this.total = total;
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
 	}	
 }
