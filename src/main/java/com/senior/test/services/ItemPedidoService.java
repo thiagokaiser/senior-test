@@ -40,22 +40,30 @@ public class ItemPedidoService {
 		"Objeto não encontrado! Id: " + id + ", Tipo: " + ItemPedido.class.getName()));
 	}
 
-	public ItemPedido insert(ItemPedido obj) {
-		Pedido pedido = pedidoService.find(obj.getPedido().getId());
-		obj.setPedido(pedido);
-		return itemPedidoRepo.save(obj);		
+	public ItemPedido insert(ItemPedidoUpdateDTO objDto) {
+		ItemPedido obj = fromDTO(objDto);
+		obj.setPreco(obj.getItem().getPreco());
+		updateTotaisItem(obj);
+		obj = itemPedidoRepo.save(obj);
+		updateTotaisPedido(obj);
+		return obj;		
 	}
 	
 	public ItemPedido update(ItemPedido obj) {
 		ItemPedido newObj = find(obj.getId());
-		updateData(newObj, obj);		
-		return itemPedidoRepo.save(newObj);
+		updateData(newObj, obj);
+		updateTotaisItem(newObj);
+		newObj = itemPedidoRepo.save(newObj); 
+		updateTotaisPedido(newObj);
+		return newObj;
 	}
 	
 	public void delete(ItemPedidoPK id) {
-		find(id);
+		ItemPedido obj = find(id);
 		try {
-			itemPedidoRepo.deleteById(id);			
+			itemPedidoRepo.deleteById(id);
+			updateTotaisPedido(obj);
+			
 		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possivel excluir o Item do Pedido.");			
 		}		
@@ -96,7 +104,16 @@ public class ItemPedidoService {
 	}	
 	
 	private void updateData(ItemPedido newObj, ItemPedido obj) {
-		newObj.setQuantidade(obj.getQuantidade());
+		newObj.setQuantidade(obj.getQuantidade());		
+	}
+	
+	private void updateTotaisPedido(ItemPedido obj) {
+		Pedido pedido = pedidoService.find(obj.getPedido().getId());		
+		pedidoService.updateTotais(pedido);
+	}
+	
+	private void updateTotaisItem(ItemPedido obj) {
+		obj.setTotal(obj.getPreco() * obj.getQuantidade());		
 	}
 	
 }

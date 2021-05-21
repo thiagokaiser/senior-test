@@ -47,9 +47,8 @@ public class ItemPedidoResource {
 	
 	@ApiOperation(value = "Insere ItemPedido")	
 	@RequestMapping(method=RequestMethod.POST)
-	public ResponseEntity<Void> insert(@Valid @RequestBody ItemPedidoUpdateDTO objDto){		
-		ItemPedido obj = service.fromDTO(objDto);		
-		obj = service.insert(obj);
+	public ResponseEntity<Void> insert(@Valid @RequestBody ItemPedidoUpdateDTO objDto){				
+		ItemPedido obj = service.insert(objDto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(obj.getId().getItem().getId()).toUri();
 		

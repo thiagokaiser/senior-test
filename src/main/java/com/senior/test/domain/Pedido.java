@@ -7,18 +7,15 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.senior.test.domain.enums.SituacaoPedido;
-import com.senior.test.domain.listeners.PedidoListener;
 import com.senior.test.dto.PedidoUpdateDTO;
 
 @Entity
-@EntityListeners(PedidoListener.class)
 public class Pedido implements Serializable{	
 	private static final long serialVersionUID = 1L;
 	
