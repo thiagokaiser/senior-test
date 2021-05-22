@@ -54,7 +54,9 @@ class PedidoServiceTest {
 		pedido1.addItem(itemPedido1);
 		pedido1.addItem(itemPedido2);
 		
-		Mockito.when(pedidoRepository.findById(pedido1.getId())).thenReturn(Optional.of(pedido1));		
+		Mockito.when(pedidoRepository.findById(pedido1.getId()))
+			.thenReturn(Optional.of(pedido1));
+		
 		Mockito.when(pedidoRepository.save(Mockito.any(Pedido.class)))
         	.thenAnswer(i -> i.getArguments()[0]);
 		
@@ -62,7 +64,7 @@ class PedidoServiceTest {
 	
 	@Test
 	void updateTotaisTest() {		
-		pedidoService.updateOnlyTotais(pedido1);
+		pedidoService.updateAndSaveTotais(pedido1);
 		assertEquals(78, pedido1.getTotal());
 		assertEquals(18, pedido1.getTotalProduto());
 		assertEquals(60, pedido1.getTotalServico());

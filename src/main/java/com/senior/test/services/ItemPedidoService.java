@@ -37,7 +37,7 @@ public class ItemPedidoService {
 	public ItemPedido find(ItemPedidoPK id) {				
 		Optional<ItemPedido> obj = itemPedidoRepo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
-		"Objeto não encontrado! Id: " + id + ", Tipo: " + ItemPedido.class.getName()));
+		"Objeto não encontrado! IdPedido: " + id.getPedido().getId() + " idItem: " + id.getItem().getId() + ", Tipo: " + ItemPedido.class.getName()));
 	}
 
 	public ItemPedido insert(ItemPedidoUpdateDTO objDto) {
@@ -108,7 +108,7 @@ public class ItemPedidoService {
 	}
 	
 	private void updateTotaisPedido(ItemPedido obj) {
-		pedidoService.updateOnlyTotais(obj.getPedido());
+		pedidoService.updateAndSaveTotais(obj.getPedido());
 	}
 	
 	private void updateTotaisItem(ItemPedido obj) {

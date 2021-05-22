@@ -52,7 +52,7 @@ public class PedidoService {
 		return repo.save(newObj);
 	}
 	
-	public Pedido updateOnlyTotais(Pedido obj) {
+	public Pedido updateAndSaveTotais(Pedido obj) {
 		Pedido newObj = find(obj.getId());
 		updateTotais(newObj);
 		return repo.save(newObj);

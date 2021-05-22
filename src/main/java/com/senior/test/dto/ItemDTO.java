@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import com.senior.test.domain.Item;
@@ -17,11 +18,21 @@ public class ItemDTO implements Serializable{
 	@Size(min=3, max=80, message = "Campo deve estar entre 3 e 80 caracteres")
 	private String descricao;
 	
+	@Positive(message = "Preço deve ser maior que zero")
 	private Double preco;	
 	private Integer tipo;
 	private Boolean ativo;
 
 	public ItemDTO() {		
+	}
+	
+	public ItemDTO(UUID id,	String descricao, Double preco, Integer tipo, Boolean ativo) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+		this.preco = preco;
+		this.tipo = tipo;
+		this.ativo = ativo;
 	}
 	
 	public ItemDTO(Item obj) {		
