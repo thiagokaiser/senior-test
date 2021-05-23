@@ -77,7 +77,7 @@ public class ItemPedidoService {
 		return itemPedidoRepo.findById_Pedido_Id(idPedido);
 	}
 	
-	public Page<ItemPedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction, String search){		
+	public Page<ItemPedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction){		
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);		
 		return itemPedidoRepo.findAll(pageRequest);		
 	}

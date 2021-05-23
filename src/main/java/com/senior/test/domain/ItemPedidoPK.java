@@ -3,6 +3,7 @@ package com.senior.test.domain;
 import java.io.Serializable;
 
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -14,7 +15,7 @@ public class ItemPedidoPK implements Serializable {
 	@JoinColumn(name="pedido_id")
 	private Pedido pedido;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="item_id")
 	private Item item;	
 

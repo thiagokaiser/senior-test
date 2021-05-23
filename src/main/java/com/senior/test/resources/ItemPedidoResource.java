@@ -92,10 +92,9 @@ public class ItemPedidoResource {
 			@RequestParam(value="page", defaultValue = "0") Integer page, 
 			@RequestParam(value="linesPerPage", defaultValue = "24") Integer linesPerPage, 
 			@RequestParam(value="orderBy", defaultValue = "instante") String orderBy, 
-			@RequestParam(value="direction", defaultValue = "DESC") String direction,
-			@RequestParam(value="search", defaultValue = "") String search) {
+			@RequestParam(value="direction", defaultValue = "DESC") String direction) {
 		
-		Page<ItemPedido> list = service.findPage(page, linesPerPage, orderBy, direction, search);
+		Page<ItemPedido> list = service.findPage(page, linesPerPage, orderBy, direction);
 		Page<ItemPedidoDTO> listDto = list.map(obj -> new ItemPedidoDTO(obj));
 		return ResponseEntity.ok().body(listDto);		
 		

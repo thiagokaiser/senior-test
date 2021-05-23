@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -33,7 +34,7 @@ public class Pedido implements Serializable{
 	private Double total;
 	private String observacao;
 	
-	@OneToMany(mappedBy = "id.pedido")
+	@OneToMany(mappedBy = "id.pedido", fetch = FetchType.EAGER)
 	private Set<ItemPedido> itens = new HashSet<>();
 
 	public Pedido() {
