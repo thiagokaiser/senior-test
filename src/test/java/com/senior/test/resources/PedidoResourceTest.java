@@ -1,10 +1,12 @@
 package com.senior.test.resources;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
 
@@ -16,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senior.test.domain.Item;
@@ -94,10 +97,14 @@ class PedidoResourceTest {
 		
 		PedidoUpdateDTO dto = new PedidoUpdateDTO(1, -10.0, "");
 		
-		mockMvc.perform(post("/item")
+		MvcResult result = mockMvc.perform(post("/pedido")
 				.contentType("application/json")
 				.content(objectMapper.writeValueAsString(dto)))
-			.andExpect(status().isUnprocessableEntity());
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Desconto deve ser positivo ou zero");
 		
 	}
 	
@@ -106,22 +113,30 @@ class PedidoResourceTest {
 		
 		PedidoUpdateDTO dto = new PedidoUpdateDTO(1, 91.0, "");
 		
-		mockMvc.perform(post("/item")
+		MvcResult result = mockMvc.perform(post("/pedido")
 				.contentType("application/json")
 				.content(objectMapper.writeValueAsString(dto)))
-			.andExpect(status().isUnprocessableEntity());
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Desconto maximo é de 90%");
 		
 	}
 	
 	@Test
 	void insertPedido_ObservacaoMaiorQueSessenta_Error() throws Exception {
 		String obs = RandomString.make(61);
-		PedidoUpdateDTO dto = new PedidoUpdateDTO(1, 91.0, obs);		
+		PedidoUpdateDTO dto = new PedidoUpdateDTO(1, 20.0, obs);		
 		
-		mockMvc.perform(post("/item")
+		MvcResult result = mockMvc.perform(post("/pedido")
 				.contentType("application/json")
 				.content(objectMapper.writeValueAsString(dto)))
-			.andExpect(status().isUnprocessableEntity());
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Observação deve ter no maximo 60 caracteres");
 		
 	}
 }

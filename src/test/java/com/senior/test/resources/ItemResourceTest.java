@@ -1,10 +1,12 @@
 package com.senior.test.resources;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senior.test.domain.Item;
@@ -80,10 +83,14 @@ class ItemResourceTest {
 	void insertItem_DescricaoMenorQueTresCaracteres_Error() throws Exception {		
 		ItemDTO dto = new ItemDTO(UUID.randomUUID(), "aa", 1.0, 1, true);
 		
-		mockMvc.perform(post("/item")
+		MvcResult result = mockMvc.perform(post("/item")
 				.contentType("application/json")
 				.content(objectMapper.writeValueAsString(dto)))
-			.andExpect(status().isUnprocessableEntity());
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Campo deve estar entre 3 e 80 caracteres");
 		
 	}
 	
@@ -92,10 +99,14 @@ class ItemResourceTest {
 		String desc = RandomString.make(81);
 		ItemDTO dto = new ItemDTO(UUID.randomUUID(), desc, 1.0, 1, true);
 		
-		mockMvc.perform(post("/item")
+		MvcResult result = mockMvc.perform(post("/item")
 				.contentType("application/json")
 				.content(objectMapper.writeValueAsString(dto)))
-			.andExpect(status().isUnprocessableEntity());
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Campo deve estar entre 3 e 80 caracteres");
 		
 	}
 	
@@ -103,10 +114,14 @@ class ItemResourceTest {
 	void insertItem_PrecoMenorQueZero_Error() throws Exception {		
 		ItemDTO dto = new ItemDTO(UUID.randomUUID(), "aaaaa", -1.0, 1, true);
 		
-		mockMvc.perform(post("/item")
+		MvcResult result = mockMvc.perform(post("/item")
 				.contentType("application/json")
 				.content(objectMapper.writeValueAsString(dto)))
-			.andExpect(status().isUnprocessableEntity());
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Preço deve ser maior que zero");
 		
 	}
 	
@@ -114,10 +129,14 @@ class ItemResourceTest {
 	void insertItem_PrecoIgualZero_Error() throws Exception {		
 		ItemDTO dto = new ItemDTO(UUID.randomUUID(), "aaaaa", 0.0, 1, true);
 		
-		mockMvc.perform(post("/item")
+		MvcResult result = mockMvc.perform(post("/item")
 				.contentType("application/json")
 				.content(objectMapper.writeValueAsString(dto)))
-			.andExpect(status().isUnprocessableEntity());
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Preço deve ser maior que zero");
 		
 	}
 }

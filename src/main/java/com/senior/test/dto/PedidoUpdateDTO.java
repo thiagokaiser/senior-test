@@ -14,7 +14,7 @@ public class PedidoUpdateDTO implements Serializable{
 	
 	private Integer situacao;
 	
-	@PositiveOrZero(message = "Desconto deve ser positivo")
+	@PositiveOrZero(message = "Desconto deve ser positivo ou zero")
 	@Max(value = 90, message = "Desconto maximo é de 90%")
 	private Double desconto;	
 	

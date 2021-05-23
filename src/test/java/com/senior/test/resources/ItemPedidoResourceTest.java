@@ -1,10 +1,12 @@
 package com.senior.test.resources;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
 
@@ -16,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senior.test.domain.Item;
@@ -106,10 +109,14 @@ class ItemPedidoResourceTest {
 		
 		ItemPedidoUpdateDTO dto = new ItemPedidoUpdateDTO(id.getPedido().getId(), id.getItem().getId(), 0);
 		
-		mockMvc.perform(post("/itemPedido")
+		MvcResult result = mockMvc.perform(post("/itemPedido")
 			.contentType("application/json")
 			.content(objectMapper.writeValueAsString(dto)))
-		.andExpect(status().isUnprocessableEntity());
+		.andExpect(status().isUnprocessableEntity())
+		.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Quantidade deve ser maior que zero");
 		
 	}
 }

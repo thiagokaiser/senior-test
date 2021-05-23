@@ -14,7 +14,7 @@ public class ItemPedidoUpdateDTO implements Serializable{
 	private UUID idPedido;	
 	private UUID idItem;
 		
-	@Min(value = 1, message = "Valor deve ser maior que zero")
+	@Min(value = 1, message = "Quantidade deve ser maior que zero")
 	private Integer quantidade;	
 
 	public ItemPedidoUpdateDTO() {
