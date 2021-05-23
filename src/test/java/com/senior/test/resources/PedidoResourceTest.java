@@ -1,9 +1,12 @@
 package com.senior.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
@@ -24,9 +27,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senior.test.domain.Item;
 import com.senior.test.domain.ItemPedido;
 import com.senior.test.domain.Pedido;
+import com.senior.test.domain.enums.SituacaoPedido;
 import com.senior.test.domain.enums.TipoItem;
 import com.senior.test.dto.PedidoUpdateDTO;
 import com.senior.test.services.PedidoService;
+import com.senior.test.services.exceptions.DataIntegrityException;
 import com.senior.test.services.exceptions.ObjectNotFoundException;
 
 import net.bytebuddy.utility.RandomString;
@@ -138,5 +143,106 @@ class PedidoResourceTest {
 		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
 		assertThat(response).contains("Observação deve ter no maximo 60 caracteres");
 		
+	}	
+	
+	@Test
+	void updatePedido_Success() throws Exception {		
+		
+		PedidoUpdateDTO dto = new PedidoUpdateDTO(1, 0.0, "");
+		
+		mockMvc.perform(put("/pedido/{id}", pedido.getId())
+			.contentType("application/json")
+			.content(objectMapper.writeValueAsString(dto)))
+		.andExpect(status().isNoContent());
 	}
+	
+	@Test
+	void updatePedido_PedidoFechado_Error() throws Exception {
+		
+		Pedido pedido1 = pedido;
+		pedido1.setId(UUID.randomUUID());
+		pedido1.setSituacao(SituacaoPedido.FECHADO);
+		when(pedidoService.find(pedido1.getId())).thenReturn(pedido1);
+		
+		PedidoUpdateDTO dto = new PedidoUpdateDTO(1, 20.0, "");
+		
+		MvcResult result = mockMvc.perform(put("/pedido/{id}", pedido1.getId())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(dto)))
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Pedido não está ABERTO");
+		
+	}
+	
+	@Test
+	void updatePedido_DescontoMenorQueZero_Error() throws Exception {
+		
+		PedidoUpdateDTO dto = new PedidoUpdateDTO(1, -10.0, "");
+		
+		MvcResult result = mockMvc.perform(put("/pedido/{id}", pedido.getId())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(dto)))
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Desconto deve ser positivo ou zero");
+		
+	}
+	
+	@Test
+	void updatePedido_DescontoMaiorQueNoventa_Error() throws Exception {
+		
+		PedidoUpdateDTO dto = new PedidoUpdateDTO(1, 91.0, "");
+		
+		MvcResult result = mockMvc.perform(put("/pedido/{id}", pedido.getId())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(dto)))
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Desconto maximo é de 90%");
+		
+	}
+	
+	@Test
+	void updatePedido_ObservacaoMaiorQueSessenta_Error() throws Exception {
+		String obs = RandomString.make(61);
+		PedidoUpdateDTO dto = new PedidoUpdateDTO(1, 20.0, obs);		
+		
+		MvcResult result = mockMvc.perform(put("/pedido/{id}", pedido.getId())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(dto)))
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Observação deve ter no maximo 60 caracteres");
+		
+	}	
+	
+	@Test
+	void deletePedido_Success() throws Exception {		
+		
+		mockMvc.perform(delete("/pedido/{id}", pedido.getId()))
+				.andExpect(status().isNoContent());			
+		
+	}
+	
+	@Test
+	void deletePedido_Error() throws Exception {	
+		
+		doThrow(new DataIntegrityException("Não é possivel excluir o Pedido")).when(pedidoService).delete(pedido.getId());
+		MvcResult result = mockMvc.perform(delete("/pedido/{id}", pedido.getId()))
+			.andExpect(status().isBadRequest())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Não é possivel excluir o Pedido");
+	}
+	
 }

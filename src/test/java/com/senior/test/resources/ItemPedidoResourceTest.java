@@ -2,8 +2,10 @@ package com.senior.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
@@ -117,6 +119,65 @@ class ItemPedidoResourceTest {
 		
 		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
 		assertThat(response).contains("Quantidade deve ser maior que zero");
+		
+	}
+	
+	@Test
+	void insertItemPedido_ItemDesativado_Error() throws Exception {
+		
+		Item item = new Item(UUID.randomUUID(),"Item 1", 10.0, TipoItem.PRODUTO, false);
+		Pedido pedido = new Pedido(UUID.randomUUID(), new Date(), 1, 10.0, 0.0, 0.0, 0.0, null);
+		ItemPedidoPK id = new ItemPedidoPK();		
+		id.setItem(item);
+		id.setPedido(pedido);		
+		ItemPedidoUpdateDTO dto = new ItemPedidoUpdateDTO(id.getPedido().getId(), id.getItem().getId(), 1);
+		
+		when(pedidoService.find(pedido.getId())).thenReturn(pedido);
+		when(itemService.find(item.getId())).thenReturn(item);
+		
+		MvcResult result = mockMvc.perform(post("/itemPedido")
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(dto)))
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+			
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Item não esta ativo");		
+		
+	}
+	
+	@Test
+	void updateItemPedido_Success() throws Exception {		
+		
+		ItemPedidoUpdateDTO dto = new ItemPedidoUpdateDTO(id.getPedido().getId(), id.getItem().getId(), 1);
+		
+		mockMvc.perform(put("/itemPedido/{idPedido}/{idItem}", id.getPedido().getId(), id.getItem().getId())
+			.contentType("application/json")
+			.content(objectMapper.writeValueAsString(dto)))
+		.andExpect(status().isNoContent());
+	}
+	
+	@Test
+	void updateItemPedido_QuantidadeMenorIgualZero_Error() throws Exception {
+		
+		ItemPedidoUpdateDTO dto = new ItemPedidoUpdateDTO(id.getPedido().getId(), id.getItem().getId(), 0);
+		
+		MvcResult result = mockMvc.perform(put("/itemPedido/{idPedido}/{idItem}", id.getPedido().getId(), id.getItem().getId())
+			.contentType("application/json")
+			.content(objectMapper.writeValueAsString(dto)))
+		.andExpect(status().isUnprocessableEntity())
+		.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Quantidade deve ser maior que zero");
+		
+	}
+	
+	@Test
+	void deleteItemPedido_Success() throws Exception {		
+		
+		mockMvc.perform(delete("/itemPedido/{idPedido}/{idItem}", id.getPedido().getId(), id.getItem().getId()))
+				.andExpect(status().isNoContent());			
 		
 	}
 }

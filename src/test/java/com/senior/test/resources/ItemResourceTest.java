@@ -1,9 +1,12 @@
 package com.senior.test.resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
@@ -25,6 +28,7 @@ import com.senior.test.domain.Item;
 import com.senior.test.domain.enums.TipoItem;
 import com.senior.test.dto.ItemDTO;
 import com.senior.test.services.ItemService;
+import com.senior.test.services.exceptions.DataIntegrityException;
 import com.senior.test.services.exceptions.ObjectNotFoundException;
 
 @SpringBootTest
@@ -52,7 +56,7 @@ class ItemResourceTest {
 		
 		when(this.itemService.fromDTO(Mockito.any(ItemDTO.class))).thenReturn(item);
 		when(this.itemService.insert(Mockito.any(Item.class))).thenReturn(item);
-		when(this.itemService.find(item.getId())).thenReturn(new Item());
+		when(this.itemService.find(item.getId())).thenReturn(new Item());		
 				
 	}
 
@@ -69,7 +73,7 @@ class ItemResourceTest {
 		when(this.itemService.find(id)).thenThrow(new ObjectNotFoundException(""));
 		mockMvc.perform(get("/item/{id}", id))
 			.andExpect(status().isNotFound());
-	}
+	}	
 	
 	@Test
 	void insertItem_Success() throws Exception {		
@@ -138,5 +142,93 @@ class ItemResourceTest {
 		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
 		assertThat(response).contains("Preço deve ser maior que zero");
 		
+	}
+	
+	@Test
+	void updateItem_Success() throws Exception {		
+		mockMvc.perform(put("/item/{id}", item.getId())
+			.contentType("application/json")
+			.content(objectMapper.writeValueAsString(itemDto)))
+		.andExpect(status().isNoContent());
+	}
+	
+	@Test
+	void updateItem_DescricaoMenorQueTresCaracteres_Error() throws Exception {		
+		ItemDTO dto = new ItemDTO(UUID.randomUUID(), "aa", 1.0, 1, true);
+		
+		MvcResult result = mockMvc.perform(put("/item/{id}", item.getId())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(dto)))
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Campo deve estar entre 3 e 80 caracteres");
+		
+	}
+	
+	@Test
+	void updateItem_DescricaoMaiorQueOitentaCaracteres_Error() throws Exception {		
+		String desc = RandomString.make(81);
+		ItemDTO dto = new ItemDTO(UUID.randomUUID(), desc, 1.0, 1, true);
+		
+		MvcResult result = mockMvc.perform(put("/item/{id}", item.getId())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(dto)))
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Campo deve estar entre 3 e 80 caracteres");
+		
+	}
+	
+	@Test
+	void updateItem_PrecoMenorQueZero_Error() throws Exception {		
+		ItemDTO dto = new ItemDTO(UUID.randomUUID(), "aaaaa", -1.0, 1, true);
+		
+		MvcResult result = mockMvc.perform(put("/item/{id}", item.getId())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(dto)))
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Preço deve ser maior que zero");
+		
+	}
+	
+	@Test
+	void updateItem_PrecoIgualZero_Error() throws Exception {		
+		ItemDTO dto = new ItemDTO(UUID.randomUUID(), "aaaaa", 0.0, 1, true);
+		
+		MvcResult result = mockMvc.perform(put("/item/{id}", item.getId())
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(dto)))
+			.andExpect(status().isUnprocessableEntity())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Preço deve ser maior que zero");
+		
+	}
+	
+	@Test
+	void deleteItem_Success() throws Exception {		
+		
+		mockMvc.perform(delete("/item/{id}", item.getId()))
+				.andExpect(status().isNoContent());			
+		
+	}
+	
+	@Test
+	void deleteItem_Error() throws Exception {		
+		doThrow(new DataIntegrityException("Não é possivel excluir um Item que possui Pedidos")).when(itemService).delete(item.getId());
+		MvcResult result = mockMvc.perform(delete("/item/{id}", item.getId()))
+			.andExpect(status().isBadRequest())
+			.andReturn();
+		
+		String response = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+		assertThat(response).contains("Não é possivel excluir um Item que possui Pedidos");
 	}
 }

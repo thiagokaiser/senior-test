@@ -1,6 +1,10 @@
 package com.senior.test.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Date;
 import java.util.Optional;
@@ -20,6 +24,7 @@ import com.senior.test.domain.Item;
 import com.senior.test.domain.ItemPedido;
 import com.senior.test.domain.Pedido;
 import com.senior.test.domain.enums.TipoItem;
+import com.senior.test.dto.PedidoUpdateDTO;
 import com.senior.test.repositories.PedidoRepository;
 
 @ExtendWith(SpringExtension.class)
@@ -39,23 +44,23 @@ class PedidoServiceTest {
 		}		
 	}
 	
-	private Pedido pedido1 = new Pedido();
+	private Pedido pedido = new Pedido();
 	
 	@BeforeEach
 	void setUp() throws Exception {
 		Item item1 = new Item(UUID.randomUUID(),"Item 1", 10.0, TipoItem.PRODUTO, true);
 		Item item2 = new Item(UUID.randomUUID(),"Item 2", 20.0, TipoItem.SERVICO, true);		
 		
-		pedido1 = new Pedido(UUID.randomUUID(), new Date(), 1, 10.0, 0.0, 0.0, 0.0, null);				
+		pedido = new Pedido(UUID.randomUUID(), new Date(), 1, 10.0, 0.0, 0.0, 0.0, null);				
 		
-		ItemPedido itemPedido1 = new ItemPedido(pedido1, item1, 2, 10.0, 0.0);		
-		ItemPedido itemPedido2 = new ItemPedido(pedido1, item2, 3, 20.0, 0.0);				
+		ItemPedido itemPedido1 = new ItemPedido(pedido, item1, 2, 10.0, 0.0);		
+		ItemPedido itemPedido2 = new ItemPedido(pedido, item2, 3, 20.0, 0.0);				
 		
-		pedido1.addItem(itemPedido1);
-		pedido1.addItem(itemPedido2);
+		pedido.addItem(itemPedido1);
+		pedido.addItem(itemPedido2);
 		
-		Mockito.when(pedidoRepository.findById(pedido1.getId()))
-			.thenReturn(Optional.of(pedido1));
+		Mockito.when(pedidoRepository.findById(pedido.getId()))
+			.thenReturn(Optional.of(pedido));
 		
 		Mockito.when(pedidoRepository.save(Mockito.any(Pedido.class)))
         	.thenAnswer(i -> i.getArguments()[0]);
@@ -64,13 +69,58 @@ class PedidoServiceTest {
 	
 	@Test
 	void updateTotaisTest() {		
-		pedidoService.updateAndSaveTotais(pedido1);
-		assertEquals(78, pedido1.getTotal());
-		assertEquals(18, pedido1.getTotalProduto());
-		assertEquals(60, pedido1.getTotalServico());
+		pedidoService.updateAndSaveTotais(pedido);
+		assertEquals(78, pedido.getTotal());
+		assertEquals(18, pedido.getTotalProduto());
+		assertEquals(60, pedido.getTotalServico());
 	}
 	
+	@Test
+	void findPedido_Success() {
+		Pedido pedidoFind = pedidoService.find(pedido.getId());
+		assertEquals(pedidoFind, pedido);		
+	}
 	
-	
+	@Test
+	void findPedido_NotFount() {
+		
+		UUID id = UUID.randomUUID();
+		when(pedidoRepository.findById(id))
+			.thenReturn(Optional.ofNullable(null));		
+		
+		Exception exception = assertThrows(RuntimeException.class, () -> {
+			pedidoService.find(id);
+	    });	    
 
+	    assertThat(exception.getMessage()).contains("Objeto não encontrado");		
+	}
+	
+	@Test
+	void insertPedido_Success() {
+		PedidoUpdateDTO dto = new PedidoUpdateDTO(1, 1.0, "");
+		pedidoService.insert(dto);
+		verify(pedidoRepository).save(Mockito.any(Pedido.class));
+	}
+	
+	@Test
+	void updatePedido_Success(){
+		Pedido pedidoSaved = pedidoService.update(pedido);
+		assertThat(pedido).isEqualTo(pedidoSaved);		
+	}
+	
+	@Test
+	void updatePedido_AlteraDescontoRecalculaTotais_Success(){
+		pedido.setDesconto(50.0);
+		Pedido pedidoSaved = pedidoService.update(pedido);
+		assertThat(pedido).isEqualTo(pedidoSaved);
+		assertEquals(70, pedido.getTotal());
+		assertEquals(10, pedido.getTotalProduto());
+		assertEquals(60, pedido.getTotalServico());
+	}
+	
+	@Test
+	void deletePedido_Success() {
+		pedidoService.delete(pedido.getId());
+		verify(pedidoRepository).deleteById(pedido.getId());
+	}
 }

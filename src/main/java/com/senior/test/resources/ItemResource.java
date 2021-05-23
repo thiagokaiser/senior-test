@@ -64,7 +64,7 @@ public class ItemResource {
 	
 	@ApiOperation(value = "Remove Item")
 	@ApiResponses(value = {
-			@ApiResponse(code = 400, message = "Não é possível excluir uma categoria que possui produtos"),
+			@ApiResponse(code = 400, message = "Não é possível excluir um Item que possui Pedidos"),
 			@ApiResponse(code = 404, message = "Código inexistente") })	
 	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable UUID id) {
